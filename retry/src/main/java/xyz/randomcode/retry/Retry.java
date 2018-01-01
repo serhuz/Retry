@@ -20,6 +20,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.VisibleForTesting;
 
 import java.lang.ref.WeakReference;
 
@@ -39,20 +40,21 @@ public class Retry {
 
     private int currentRetry = 0;
 
-    private Retry(@NonNull RetryOptions retryOptions,
-                  @NonNull Looper looper) {
-        handler = new Handler(looper);
-        retryRunnable = new RetryRunnable();
+    @VisibleForTesting
+    Retry(@NonNull RetryOptions retryOptions,
+                  @NonNull Handler handler) {
+        this.handler = handler;
         this.retryOptions = retryOptions;
+        this.retryRunnable = new RetryRunnable();
     }
 
     public static Retry create(@NonNull RetryOptions retryOptions) {
-        return new Retry(retryOptions, Looper.getMainLooper());
+        return create(retryOptions, Looper.getMainLooper());
     }
 
     public static Retry create(@NonNull RetryOptions retryOptions,
                                @NonNull Looper looper) {
-        return new Retry(retryOptions, looper);
+        return new Retry(retryOptions, new Handler(looper));
     }
 
     public Retry withSuccessAction(@NonNull SuccessAction successAction) {
@@ -73,7 +75,7 @@ public class Retry {
     public void recordFailure() {
         if (currentRetry < retryOptions.maxRetries()) {
             handler.removeCallbacks(retryRunnable);
-            handler.postDelayed(retryRunnable, retryOptions.initialDelay() * currentRetry++);
+            handler.postDelayed(retryRunnable, retryOptions.initialDelayMillis() * currentRetry++);
         } else {
             CompleteAction action = completeActionRef.get();
             if (action != null) action.onComplete();
@@ -86,7 +88,8 @@ public class Retry {
         if (action != null) action.onSuccess();
     }
 
-    private class RetryRunnable implements Runnable {
+    @VisibleForTesting
+    class RetryRunnable implements Runnable {
         @Override
         public void run() {
             FailAction action = failActionRef.get();

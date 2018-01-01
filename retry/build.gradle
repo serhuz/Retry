@@ -1,12 +1,11 @@
 apply plugin: 'com.android.library'
-apply plugin: 'me.tatarka.retrolambda'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.3"
+    compileSdkVersion 26
+    buildToolsVersion '26.0.3'
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -16,11 +15,6 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
-    }
-    retrolambda {
-        javaVersion JavaVersion.VERSION_1_7
-        defaultMethods false
-        incremental true
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -35,29 +29,17 @@ android {
 }
 
 ext {
-    assertjVersion = '2.6.0'
-    mockitoVersion = '1.10.19'
-    dexmakerVersion = '1.4'
+    assertjVersion = '2.8.0'
+    mockitoVersion = '2.13.0'
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testImplementation 'junit:junit:4.12'
+    testImplementation "org.mockito:mockito-core:$mockitoVersion"
+    testImplementation "org.assertj:assertj-core:$assertjVersion"
 
-    testCompile 'junit:junit:4.12'
+    api 'com.android.support:appcompat-v7:26.1.0'
 
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
-        exclude group: 'com.android.support', module: 'support-annotations'
-    })
-    androidTestCompile "org.mockito:mockito-core:$mockitoVersion"
-    androidTestCompile "org.assertj:assertj-core:$assertjVersion"
-    androidTestCompile 'com.android.support.test:runner:0.5'
-    androidTestCompile 'com.android.support.test:rules:0.5'
-    androidTestCompile "com.crittercism.dexmaker:dexmaker-dx:$dexmakerVersion"
-    androidTestCompile "com.crittercism.dexmaker:dexmaker:$dexmakerVersion"
-    androidTestCompile "com.crittercism.dexmaker:dexmaker-mockito:$dexmakerVersion"
-
-    compile 'com.android.support:appcompat-v7:25.3.1'
-
-    compile "com.google.auto.value:auto-value:1.4.1"
-    annotationProcessor "com.google.auto.value:auto-value:1.4.1"
+    compileOnly 'com.google.auto.value:auto-value:1.5.2'
+    annotationProcessor "com.google.auto.value:auto-value:1.5.2"
 }

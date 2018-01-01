@@ -16,6 +16,8 @@
 
 package xyz.randomcode.retry;
 
+import android.support.annotation.IntRange;
+
 import com.google.auto.value.AutoValue;
 
 @AutoValue
@@ -27,14 +29,14 @@ public abstract class RetryOptions {
 
     public abstract int maxRetries();
 
-    public abstract int initialDelay();
+    public abstract long initialDelayMillis();
 
     @AutoValue.Builder
     public abstract static class Builder {
 
-        public abstract Builder setMaxRetries(int maxRetries);
+        public abstract Builder setMaxRetries(@IntRange(from = 0) int maxRetries);
 
-        public abstract Builder setInitialDelay(int initialDelay);
+        public abstract Builder setInitialDelayMillis(@IntRange(from = 0) long initialDelayMillis);
 
         public abstract RetryOptions build();
     }
