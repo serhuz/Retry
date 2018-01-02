@@ -18,9 +18,13 @@ package xyz.randomcode.retry.backoff;
 
 public abstract class AbstractBackoffStrategy implements BackoffStrategy {
 
-    private final long initialDelay;
+    protected final long initialDelay;
 
     public AbstractBackoffStrategy(long initialDelay) {
         this.initialDelay = initialDelay;
+    }
+
+    public long getInitialDelay() {
+        return initialDelay;
     }
 }

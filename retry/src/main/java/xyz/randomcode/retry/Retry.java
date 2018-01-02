@@ -38,7 +38,7 @@ public class Retry {
     private WeakReference<FailAction> failActionRef;
     private WeakReference<CompleteAction> completeActionRef;
 
-    private int currentRetry = 0;
+    private int currentAttempt = 0;
 
     @VisibleForTesting
     Retry(@NonNull RetryOptions retryOptions,
@@ -73,9 +73,9 @@ public class Retry {
     }
 
     public void recordFailure() {
-        if (currentRetry < retryOptions.maxRetries()) {
+        if (currentAttempt < retryOptions.maxRetries()) {
             handler.removeCallbacks(retryRunnable);
-            handler.postDelayed(retryRunnable, retryOptions.initialDelayMillis() * currentRetry++);
+            handler.postDelayed(retryRunnable, retryOptions.initialDelayMillis() * currentAttempt++);
         } else {
             CompleteAction action = completeActionRef.get();
             if (action != null) action.onComplete();
@@ -83,7 +83,7 @@ public class Retry {
     }
 
     public void recordSuccess() {
-        currentRetry = 0;
+        currentAttempt = 0;
         SuccessAction action = successActionRef.get();
         if (action != null) action.onSuccess();
     }

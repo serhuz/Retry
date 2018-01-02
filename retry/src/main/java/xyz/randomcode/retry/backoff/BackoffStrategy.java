@@ -16,13 +16,9 @@
 
 package xyz.randomcode.retry.backoff;
 
+import android.support.annotation.IntRange;
+
 public interface BackoffStrategy {
 
-    long getNextRetryDelay();
-
-    void recordFailure();
-
-    void recordSuccess();
-
-    void reset();
+    long getNextRetryDelayMillis(@IntRange(from = 1) int currentAttempt);
 }
